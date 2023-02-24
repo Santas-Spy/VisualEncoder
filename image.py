@@ -76,11 +76,10 @@ def getBytes(img, size):
     bits = ''
     finalPos = 0
     width = img.shape[0]
-
     for i in range(size-1, 0, -1):
         [x, y] = getPos(i, width)
         if not (img[x,y] == [0, 0, 0]).all():
-            finalPos = size-i
+            finalPos = i
             break
     
     for i in range(finalPos):
