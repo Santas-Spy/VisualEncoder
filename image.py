@@ -6,6 +6,7 @@ from numba import njit
 '''
 helper functions
 '''
+@njit
 def getPos(pos, width):
     x = int(pos / width)
     y = int(pos % width)
@@ -119,4 +120,48 @@ def bytesToImage(bits):
             pixel = []
 
     print("Did {} length data in {} pixels".format(len(bits), posCounter))
+    return img
+
+def fastFileToImage(fileName):
+    #generate the val array
+    with open(fileName, 'rb') as f:
+        fileBytes = f.read()
+    prefix = fileName.split('.')[1] + '\n'
+    prefixBytes = prefix.encode('raw_unicode_escape')
+    byteArray = prefixBytes + fileBytes
+    intArray = np.frombuffer(byteArray, dtype=np.uint8)
+
+    #build a blank image
+    numBytes = len(intArray)
+    dim = int(sqrt(numBytes/3))+1
+    print("Generating an image of size {} x {}".format(dim, dim))
+    img = np.zeros(shape=[dim,dim,3], dtype=np.uint8)
+
+    img = placePixels(img, intArray, dim)
+    return img
+
+@njit
+def placePixels(img, intArray, dim):
+    i = 0
+    intArray = np.copy(intArray)
+    pixel = np.array([0, 0, 0])
+    posCounter = 0
+    pixelCounter = 0
+
+    #for each value, assign it to a colour channel
+    for val in intArray:
+        pixel[pixelCounter] = val
+        pixelCounter += 1
+        if pixelCounter == 3:
+            #all colour channels are full for this pixel, place it on the image
+            [x,y] = getPos(posCounter, dim)
+            img[x,y] = pixel
+            pixel = np.array([0, 0, 0])
+            posCounter += 1
+            pixelCounter = 0
+        i += 1
+    
+    #make sure we place the last pixel
+    [x,y] = getPos(posCounter, dim)
+    img[x,y] = pixel
     return img
