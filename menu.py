@@ -16,4 +16,8 @@ def getOperations():
         fileName = input("That file did not exist or was not a .png file. Please try again: ")
         extension = fileName.split('.')[1]
 
-    return [action, fileName]
+    codec = input("Select the encoding type you wish to use:\n\t[1]: Black and White\n\t[2]: Colour\nChoice: ")
+    while (codec != '1' and codec != '2'):
+            codec = input("That was invalid. Please select only 1 or 2: ")
+
+    return [action, fileName, codec]
