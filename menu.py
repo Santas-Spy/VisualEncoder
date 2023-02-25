@@ -2,6 +2,8 @@ import os
 
 def getOperations():
     action = input("Select the action you wish to perform:\n\t[1]: Encode\n\t[2]: Decode\nChoice: ")
+    if (action == '69'):
+         print("nice.")
     while (action != '1' and action != '2' and action != '3'):
             action = input("That was invalid. Please select only 1 or 2: ")
 
@@ -13,7 +15,7 @@ def getOperations():
         GET_FILE = "WARNING! You are in automated testing mode"
         action = '3'
         fileName = 'input/image.png'
-        codec = '2'
+        codec = '1'
         return [action, fileName, codec]
 
     fileName =  input(GET_FILE)
