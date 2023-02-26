@@ -4,11 +4,14 @@ from cv2 import imwrite, imread
 [action, file_name, codec] = menu.getOperations()
 
 if (action == '1' or action == 'encode' or action == 'Encode'):
+    #get password
+    password = input("Would you like to encrypt the file using a password? (Leave blank for no): ")
+    
     #generate an image using bits or bytes
     if (codec == '1'):
-        img = bits.fastFileToImage(file_name)
+        img = bits.fastFileToImage(file_name, password)
     else:
-        img = bytes.fastFileToImage(file_name)
+        img = bytes.fastFileToImage(file_name, password)
     
     #save the image
     name = file_name.split('.')[0] + "_encoded.png"
@@ -26,13 +29,13 @@ elif (action == '2' or action == 'decode' or action == 'Decode'):
     
     #parse the bits and bytes into usable data
     extension, data = binary.getData(bits)
-
-    #convert the usable data into a file
-    final_file_name = file_name.split('.')[0] + "_decoded" + extension
-    with open(final_file_name, 'wb') as f:
-        f.write(data)
-    
-    print("Finished. File saved as " + final_file_name)
+    if data != None:
+        #convert the usable data into a file
+        final_file_name = file_name.split('.')[0] + "_decoded" + extension
+        with open(final_file_name, 'wb') as f:
+            f.write(data)
+        
+        print("Finished. File saved as " + final_file_name)
 
 #testing mode used for 
 elif (action == '3'):
