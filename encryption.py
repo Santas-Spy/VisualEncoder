@@ -5,7 +5,6 @@ from cryptography.fernet import InvalidToken
 import base64
 
 def getKey(password):
-    #salt = b"salt"  # A random value used to increase security
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,  # Key length in bytes
