@@ -4,7 +4,7 @@ from math import sqrt
 from numba import njit
 from cv2 import imread
 
-VERSION = '1.3.0'
+VERSION = '1.2.0'
 
 '''
 Contains functions common to both bits and bytes
