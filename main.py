@@ -1,5 +1,6 @@
 import binary, menu, bits, bytes
-from cv2 import imwrite, imread
+from PIL import Image
+import numpy as np
 
 [action, file_name, codec] = menu.getOperations()
 
@@ -15,7 +16,8 @@ if (action == '1' or action == 'encode' or action == 'Encode'):
     
     #save the image
     name = file_name.split('.')[0] + "_encoded.png"
-    imwrite(name, img)
+    pilImg = Image.fromarray(np.uint8(img))
+    pilImg.save(name)
     print("Finished. Encoded image saved as " + name)
 
 elif (action == '2' or action == 'decode' or action == 'Decode'):
@@ -42,7 +44,8 @@ elif (action == '3'):
     print("Entering testing mode")
     img = bits.fastFileToImage(file_name)
     name = file_name.split('.')[0] + "_encoded.png"
-    imwrite(name, img)
+    pilImg = Image.fromarray(np.uint8(img))
+    pilImg.save(name)
     print("Finished. Encoded image saved as " + name)
 else:
     print(str(action) + " was not a valid action")

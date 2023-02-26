@@ -2,9 +2,9 @@ import numpy as np
 import encryption
 from math import sqrt
 from numba import njit
-from cv2 import imread
+from PIL import Image
 
-VERSION = '1.2.0'
+VERSION = '1.2.1'
 
 '''
 Contains functions common to both bits and bytes
@@ -41,7 +41,8 @@ def createBlankImage(intArray, compress):
     return img, dim
 
 def prepImage(fileName):
-    img = imread(fileName)
+    image = Image.open(fileName)
+    img = np.array(image)
     size = img.shape[0] * img.shape[1]
     finalPos = 0
     width = img.shape[0]
