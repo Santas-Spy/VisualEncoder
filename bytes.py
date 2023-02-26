@@ -2,22 +2,12 @@ import numpy as np
 from math import sqrt
 from numba import njit
 from cv2 import imread
+import binary
 
 def fastFileToImage(fileName):
     #generate the val array
-    with open(fileName, 'rb') as f:
-        fileBytes = f.read()
-    prefix = fileName.split('.')[1] + '\n'
-    prefixBytes = prefix.encode('raw_unicode_escape')
-    byteArray = prefixBytes + fileBytes
-    intArray = np.frombuffer(byteArray, dtype=np.uint8)
-
-    #build a blank image
-    numBytes = len(intArray)
-    dim = int(sqrt(numBytes/3))+1
-    print("Generating an image of size {} x {}".format(dim, dim))
-    img = np.zeros(shape=[dim,dim,3], dtype=np.uint8)
-
+    intArray = binary.createIntArray(fileName)
+    img, dim = binary.createBlankImage(intArray, 3)
     img = placePixels(img, intArray, dim)
     return img
 
@@ -83,4 +73,5 @@ def readImage(fileName):
     
     #convert the data to a bytearray
     data = bytearray(int(bits[i:i+8], 2) for i in range(0, len(bits), 8))
+    print("Decoding Complete")
     return data
