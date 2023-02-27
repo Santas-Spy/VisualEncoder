@@ -1,6 +1,6 @@
-import binary, menu, bits, bytes
 from PIL import Image
 import numpy as np
+import menu
 from decoder import decode
 from encoder import encode
 
@@ -15,11 +15,7 @@ elif (action == '2' or action == 'decode' or action == 'Decode'):
 #testing mode used for automated testing
 elif (action == '3'):
     print("Entering testing mode")
-    img = bits.fastFileToImage(file_name)
-    name = file_name.split('.')[0] + "_encoded.png"
-    pilImg = Image.fromarray(np.uint8(img))
-    pilImg.save(name)
-    print("Finished. Encoded image saved as " + name)
+    print("Nothing to test")
 else:
     print(str(action) + " was not a valid action")
 

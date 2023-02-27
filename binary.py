@@ -1,6 +1,7 @@
 import numpy as np
 import encryption
 import math
+import zlib
 from numba import njit
 from PIL import Image
 
@@ -30,7 +31,8 @@ def çreateFileHeader(fileName, password):
 
 def createIntArray(fileName, password):
     byteArray = çreateFileHeader(fileName, password)
-    intArray = np.frombuffer(byteArray, dtype=np.uint8)
+    compressedData = zlib.compress(bytes(byteArray))
+    intArray = np.frombuffer(compressedData, dtype=np.uint8)
     return intArray
 
 def createBlankImage(intArray, compress):
@@ -63,15 +65,18 @@ def getPos(pos, width):
     return [x, y]
 
 def getData(raw):
-    index = raw.index(b'\n')
-    prefixData = '.' + raw[:index].decode('utf-8')
+    try:
+        index = raw.index(b'\n')
+        prefixData = '.' + raw[:index].decode('utf-8')
+        extension, version, encrypted = readPrefix(prefixData)
+    except UnicodeDecodeError:
+        print("This files header could not be decoded. This may be because the image was not encoded with this program to begin with")
+        extension = '.txt'
+        version = 'old'
+        encrypted = 'unlocked'
     data = raw[index+1:]
 
     #get header info
-    prefix = prefixData.split('\t')
-    extension = prefix[0]
-    version = prefix[1]
-    encrypted = prefix[2]
 
     if encrypted == 'locked':
         password = input("\nThis file is password protected. Please input the password: ")
@@ -89,3 +94,21 @@ def versionWarning(version):
         print("\n\033[31m[WARNING]:\033[0m This image was encoded using version {}, but you are running version {}".format(version, VERSION))
         print("           If your result is corrupted the decoding process may have changed. Try again with the matching version")
         print("           You can download the correct version from here: https://github.com/Santas-Spy/VisualEncoder/releases/tag/v" + version + "\n")
+
+def readPrefix(prefixData):
+    prefix = prefixData.split('\t')
+    try:
+        extension = prefix[0]
+    except IndexError:
+        print("[WARNING] extension information not found in file header")
+    try:
+        version = prefix[1]
+    except IndexError:
+        version = 'old'
+    try:
+        encrypted = prefix[2]
+    except IndexError:
+        print("[WARNING] encrypted status not found in file header. This may have been generated with an older version.")
+        print("          Setting file to unlocked. If the output is garbled this file was encrypted and may be corrupted")
+        encrypted = 'unlocked'
+    return extension, version, encrypted
