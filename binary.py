@@ -1,10 +1,10 @@
 import numpy as np
 import encryption
-from math import sqrt
+import math
 from numba import njit
-from cv2 import imread
+from PIL import Image
 
-VERSION = '1.2.0'
+VERSION = '1.2.1'
 
 '''
 Contains functions common to both bits and bytes
@@ -35,13 +35,14 @@ def createIntArray(fileName, password):
 
 def createBlankImage(intArray, compress):
     numBytes = len(intArray)
-    dim = int(sqrt(numBytes/compress))+1
+    dim = math.ceil(math.sqrt(numBytes/compress))
     print("Generating an image of size {} x {} using new format".format(dim, dim))
     img = np.zeros(shape=[dim,dim,3], dtype=np.uint8)
     return img, dim
 
 def prepImage(fileName):
-    img = imread(fileName)
+    image = Image.open(fileName)
+    img = np.array(image)
     size = img.shape[0] * img.shape[1]
     finalPos = 0
     width = img.shape[0]

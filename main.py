@@ -1,48 +1,24 @@
 import binary, menu, bits, bytes
-from cv2 import imwrite, imread
+from PIL import Image
+import numpy as np
+from decoder import decode
+from encoder import encode
 
 [action, file_name, codec] = menu.getOperations()
 
 if (action == '1' or action == 'encode' or action == 'Encode'):
-    #get password
-    password = input("Would you like to encrypt the file using a password? (Leave blank for no): ")
-    
-    #generate an image using bits or bytes
-    if (codec == '1'):
-        img = bits.fastFileToImage(file_name, password)
-    else:
-        img = bytes.fastFileToImage(file_name, password)
-    
-    #save the image
-    name = file_name.split('.')[0] + "_encoded.png"
-    imwrite(name, img)
-    print("Finished. Encoded image saved as " + name)
+    encode(file_name, codec)
 
 elif (action == '2' or action == 'decode' or action == 'Decode'):
-    #load the image
-    
-    #get the bits or bytes from an image
-    if (codec == '1'):
-        bits = bits.readImage(file_name)
-    else:
-        bits = bytes.readImage(file_name)
-    
-    #parse the bits and bytes into usable data
-    extension, data = binary.getData(bits)
-    if data != None:
-        #convert the usable data into a file
-        final_file_name = file_name.split('.')[0] + "_decoded" + extension
-        with open(final_file_name, 'wb') as f:
-            f.write(data)
-        
-        print("Finished. File saved as " + final_file_name)
+    decode(file_name, codec)
 
-#testing mode used for 
+#testing mode used for automated testing
 elif (action == '3'):
     print("Entering testing mode")
     img = bits.fastFileToImage(file_name)
     name = file_name.split('.')[0] + "_encoded.png"
-    imwrite(name, img)
+    pilImg = Image.fromarray(np.uint8(img))
+    pilImg.save(name)
     print("Finished. Encoded image saved as " + name)
 else:
     print(str(action) + " was not a valid action")
